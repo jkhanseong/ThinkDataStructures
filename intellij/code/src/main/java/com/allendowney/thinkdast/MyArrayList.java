@@ -41,7 +41,14 @@ public class MyArrayList<T> implements List<T> {
 	@Override
 	public boolean add(T element) {
 		if (size >= this.array.length) {
-			this.array = Arrays.copyOf(array, size + 10);
+			/*
+			 * System.arraycopy() vs. Arrays.copyOf
+			 * System.arraycopy() is implemented natively, and is therefore could be faster
+			 * then  a Java loop, it is not always as fast as you might expect.
+			 * For example, In different type case, System.arraycopy has to check the type of every reference copied.
+			 * But, Arrays.copyOf is implemented System.arraycopy.
+			 */
+			this.array = Arrays.copyOf(array, size * 2);
 		}
 		this.array[size++] = element;
 		return true;
@@ -184,10 +191,7 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		if (index < 0 || index >= size) {
-			throw new IndexOutOfBoundsException();
-		}
-		T element = this.array[index];
+		T element = get(index);
 		// shift the elements
 		for (int i=index; i<this.size - 1; ++i) {
 			array[i] = array[i+1];
@@ -212,12 +216,9 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T set(int index, T element) {
-		if (index < 0 || index >= size) {
-			throw new IndexOutOfBoundsException();
-		}
-		T obj = this.array[index];
+		T old = get(index);
 		this.array[index] = element;
-		return obj;
+		return old;
 	}
 
 	@Override
